@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+
+{% block title %}
+<a class="blog-title" href="{{ url_for('showCatalog') }}">
+  <h1 class="text-uppercase text-center">
+    The Catalog - New Category
+  </h1>
+</a>
+{% endblock %}
+
+{% block error_message %}
+  {% with error_messages = get_flashed_messages(with_categories=true) %}
+  {% if error_messages and error_messages[0] and error_messages[0][0] == 'error' %}
+    <div class="alert alert-danger" role="alert">
+      <strong>Oh snap!</strong> {{error_messages[0][1]}}
+    </div>
+  {% endif %}
+  {% endwith %}
+{% endblock %}
+
+<!-- Render the main area of the new post's' page. Only authenticated users will access this page. -->
+{% block content %}
+<div class="col-md-12">
+  <h2>Include a new Category</h2>
+  <form method="POST">
+    <div class="form-group">
+      <label for="name">
+        Category's Name:
+      </label>
+      <input type="text" class="form-control" id="title" name="title" placeholder="Title">
+    </div>
+    <div class="row">
+      <div class="error-message col-md-12">
+        {{error_message}}
+      </div>
+    </div>
+    <br>
+    <button class="btn btn-submit" type="submit">Submit</button>
+    <button class="btn btn-warning" formmethod="GET" formaction="{{ url_for('showCatalog') }}" type="submit">Cancel</button>
+  </form>
+</div>
+{% endblock %}

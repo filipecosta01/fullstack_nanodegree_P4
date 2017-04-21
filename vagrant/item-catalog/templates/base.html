@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta name="viewport" content="width=device-width, minimum-scale=1.0, initial-scale=1.0, user-scalable=yes">
+    <meta charset="utf-8">
+    <title>The Catalog - Find your goods</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css" integrity="sha384-BVYiiSIFeK1dGmJRAkycuHAHRg32OmUcww7on3RYdg4Va+PmSTsz/K68vbdEjh4u" crossorigin="anonymous">
+    <link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    {% block scripting %}
+    {% endblock %}
+  </head>
+
+  <body>
+    <div class="row">
+      <nav>
+        <div class="col-md-12 navbar">
+          <div class="row is-flex">
+            <div class="col-md-2">
+              <!-- The left area of the navbar, displays the name of the user in a session. -->
+              {% block name_area %}
+              {% endblock %}
+            </div>
+            <div class="col-md-8">
+              {% block title %}
+              {% endblock %}
+            </div>
+            <div class="col-md-2 action-area-text">
+              <!-- The right area of the navbar, for login/logout/go to main posts actions. -->
+              {% block action_area %}
+              {% endblock %}
+            </div>
+          </div>
+        </div>
+      </nav>
+      <main>
+          <div class="col-md-12">
+            <div class="row">
+              {% block error_message %}
+              {% endblock %}
+
+              {% block success_message %}
+              {% endblock %}
+            </div>
+          </div>
+          <div class="col-md-12">
+            <div class="row">
+              {% if side_navigation %}
+                <div class="col-md-2">
+                  <div class="row">
+                    {% block side_navigation %}
+                    {% endblock %}
+                  </div>
+                </div>
+              {% endif %}
+              {% if side_navigation %}
+              <div class="col-md-10">
+              {% else %}
+              <div class="col-md-12">
+              {% endif %}
+                <div class="row">
+                  <!-- The main content area of the page, displays all the forms. -->
+                  {% block content %}
+                  {% endblock %}
+                </div>
+              </div>
+            </div>
+          </div>
+      </main>
+    </div>
+  </body>
+</html>

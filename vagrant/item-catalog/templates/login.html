@@ -1,0 +1,109 @@
+{% extends "base.html" %}
+
+{% block scripting %}
+<script src="//ajax.googleapis.com/ajax/libs/jquery/1.8.2/jquery.min.js">
+</script>
+<script src="//apis.google.com/js/platform.js?onload=start"></script>
+<script>
+function signInCallback(authResult) {
+
+    if (authResult['code']) {
+      $( '#signInButton' ).attr('style', 'display: none;');
+      $('#result_error').html('');
+      $('#result_success').html('');
+      $.ajax({
+        type: 'POST',
+        url: '/gconnect?state={{STATE}}',
+        processData: false,
+        contentType: 'application/octet-stream; charset=utf-8',
+        data: authResult[ 'code' ],
+        success: function(result) {
+          if (result) {
+              $( '#result_success' ).html("<div class='alert alert-success' role='alert'><strong>Yay!</strong> Login Successful... Redirecting!</div>");
+              setTimeout(function() {
+              window.location.href = '/catalog'
+              }, 500);
+          }
+      }
+    })
+
+    } else if (authResult['error']) {
+      $('#result_error').html("<div class='alert alert-danger' role='alert'><strong>Oh snap!</strong> " + authResult['error'] + "</div>");
+    } else {
+      $('#result_error').html("<div class='alert alert-danger' role='alert'><strong>Oh snap!</strong> Something very wrong happened. Try again later...</div>");
+    }
+
+}
+</script>
+{% endblock %}
+
+{% block title %}
+<a class="blog-title" href="{{ url_for('showCatalog') }}">
+  <h1 class="text-uppercase text-center">
+    The Catalog - Login
+  </h1>
+</a>
+{% endblock %}
+
+{% block name_area %}
+<h3 class="text-center navbar-text">
+  {% if user %}
+    Viewing as {{user.username}}
+  {% else %}
+    Viewing as unknown
+  {% endif %}
+</h3>
+{% endblock %}
+
+{% block action_area %}
+  {% if user %}
+  <a href="{{ url_for('doLogout') }}">Logout</a>
+  <a href="/logout">Logout</a>
+  {% else %}
+  <div id="signInButton">
+    <span class="g-signin"
+        data-scope="openid email"
+        data-clientid="{{CLIENT_URL}}"
+        data-redirecturi="postmessage"
+        data-accesstype="offline"
+        data-cookiepolicy="single_host_origin"
+        data-callback="signInCallback"
+        data-approvalprompt="force">
+    </span>
+  </div>
+  {% endif %}
+{% endblock %}
+
+{% block error_message %}
+  {% with error_messages = get_flashed_messages(with_categories=true) %}
+  {% if error_messages and error_messages[0] and error_messages[0][0] == 'error' %}
+    <div class="alert alert-danger" role="alert">
+      <strong>Oh snap!</strong> {{error_messages[0][1]}}
+    </div>
+  {% else %}
+    <div id="result_error">
+    </div>
+  {% endif %}
+  {% endwith %}
+{% endblock %}
+
+{% block success_message %}
+  {% with success_messages = get_flashed_messages(with_categories=true) %}
+  {% if success_messages and success_messages[0] and success_messages[0][0] == 'success' %}
+    <div class="alert alert-success" role="alert">
+      <strong>Yay!</strong> {{success_messages[0][1]}}
+    </div>
+  {% else %}
+    <div id="result_success">
+    </div>
+  {% endif %}
+  {% endwith %}
+{% endblock %}
+
+{% block content %}
+<div class="col-md-12">
+  <div id="result">
+</div>
+
+</div>
+{% endblock %}
