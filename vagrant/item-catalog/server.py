@@ -19,6 +19,15 @@ Base.metadata.bind = engine
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
 
+@app.route('/catalog/JSON')
+def apiShowCatalog():
+    '''
+    Return the list of categories and latest items in json format.
+    '''
+    latest_items = session.query(Item).order_by('created_at desc').limit(12)
+    categories = session.query(Category).limit(12)
+    return jsonify(Category=[category.serialize for category in categories], LatestItems=[item.serialize for item in latest_items])
+
 @app.route('/')
 @app.route('/catalog')
 def showCatalog():
@@ -38,7 +47,7 @@ def showCatalog():
 @app.route('/login')
 def showLogin():
     '''
-    Show login view with google authentication only (for now...)
+    Show login view with google authentication only (for now...).
     '''
     user_id = getUserIdFromSession(login_session)
     if user_id:
@@ -135,6 +144,14 @@ def deleteCategory(category_id):
     else:
         return render_template('delete_category.html', category=category)
 
+@app.route('/catalog/category/<int:category_id>/items/JSON')
+def apiShowCategoryItems(category_id):
+    '''
+    Return the list of items for a specific category in json format.
+    '''
+    items = session.query(Item).filter_by(category_id=category_id)
+    return jsonify(Items=[item.serialize for item in items])
+
 @app.route('/catalog/category/<int:category_id>/items')
 def showCategoryItems(category_id):
     '''
@@ -154,6 +171,14 @@ def showCategoryItems(category_id):
     return render_template('category_items.html', side_navigation=True,
                            categories=categories, items=items,
                            category=category)
+
+@app.route('/catalog/category/<int:category_id>/item/<int:item_id>/JSON')
+def apiShowCategoryItem(category_id, item_id):
+    '''
+    Return the item for a specific category in json format.
+    '''
+    item = session.query(Item).filter_by(id=item_id).one()
+    return jsonify(Item=[item.serialize])
 
 @app.route('/catalog/category/<int:category_id>/item/<int:item_id>')
 def showCategoryItem(category_id, item_id):
