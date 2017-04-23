@@ -2,7 +2,7 @@ import sys
 
 from sqlalchemy import Column, ForeignKey, Integer, String, Text, DateTime
 from sqlalchemy.ext.declarative import declarative_base
-from sqlalchemy.orm import relationship
+from sqlalchemy.orm import relationship, backref
 from sqlalchemy import create_engine
 from sqlalchemy.sql import func
 
@@ -14,7 +14,7 @@ class User(Base):
     id = Column(Integer, primary_key = True)
     name = Column(String(80), nullable = False)
     email = Column(String(80), nullable = False)
-    
+
 class Category(Base):
     __tablename__ = 'category'
     items = []
@@ -42,7 +42,8 @@ class Item(Base):
     created_at = Column(DateTime(timezone=True), default=func.now())
     user_id = Column(Integer, ForeignKey('user.id'))
     user = relationship(User)
-    category = relationship(Category)
+    category = relationship(Category, backref=backref('items', uselist=True,
+                                                      cascade='delete,all'))
 
     @property
     def serialize(self):

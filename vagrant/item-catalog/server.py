@@ -26,6 +26,7 @@ def apiShowCatalog():
     '''
     latest_items = session.query(Item).order_by('created_at desc').limit(12).all()
     categories = session.query(Category).limit(12).all()
+
     return jsonify(Category=[category.serialize for category in categories], LatestItems=[item.serialize for item in latest_items])
 
 @app.route('/')
@@ -38,7 +39,7 @@ def showCatalog():
     categories = session.query(Category).limit(12).all()
     latest_items = session.query(Item).order_by('created_at desc').limit(12).all()
     if user_id:
-        user = user = session.query(User).filter_by(id=user_id).one()
+        user = session.query(User).filter_by(id=user_id).one()
         return render_template('catalog.html', user=user, categories=categories,
                                latest_items=latest_items, side_navigation=True)
 
