@@ -3,6 +3,7 @@ from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 from catalog import Base, User, Category, Item
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
+from functools import wraps
 
 import random, string
 import httplib2
@@ -18,6 +19,16 @@ Base.metadata.bind = engine
 
 DBSession = sessionmaker(bind=engine)
 session = DBSession()
+
+def login_required(f):
+    @wraps(f)
+    def decorated_function(*args, **kwargs):
+        user_id = getUserIdFromSession(login_session)
+        if not user_id:
+            flash('Only authenticated users can access item edit form', 'error')
+            return redirect(url_for('showLogin'))
+        return f(*args, **kwargs)
+    return decorated_function
 
 @app.route('/catalog/JSON')
 def apiShowCatalog():
@@ -61,15 +72,13 @@ def showLogin():
     return render_template('login.html', STATE=state, CLIENT_URL=CLIENT_ID)
 
 @app.route('/catalog/category/create', methods=['GET', 'POST'])
+@login_required
 def createCategory():
     '''
     Render the form to create a new category and save it in database if all the
     information was filled correctly.
     '''
     user_id = getUserIdFromSession(login_session)
-    if not user_id:
-        flash('Only authenticated users can create categories', 'error')
-        return redirect(url_for('showLogin'))
 
     if request.method == 'POST':
         category_title = request.form['title']
@@ -88,15 +97,13 @@ def createCategory():
         return render_template('create_category.html')
 
 @app.route('/catalog/category/<int:category_id>/edit', methods=['GET', 'POST'])
+@login_required
 def editCategory(category_id):
     '''
     Render the form to edit a specific category and save it in database if all
     the information was filled correctly.
     '''
     user_id = getUserIdFromSession(login_session)
-    if not user_id:
-        flash('Only authenticated users can edit categories', 'error')
-        return redirect(url_for('showLogin'))
     category = session.query(Category).filter_by(id=category_id).one()
     if not category.user_id == user_id:
         flash('Only owner can edit a specific category', 'error')
@@ -119,15 +126,12 @@ def editCategory(category_id):
 
 @app.route('/catalog/category/<int:category_id>/delete',
            methods=['GET', 'POST'])
+@login_required
 def deleteCategory(category_id):
     '''
     Render the form to delete a specific category and delete it in database.
     '''
     user_id = getUserIdFromSession(login_session)
-    if not user_id:
-        flash('Only authenticated users can delete categories', 'error')
-        return redirect(url_for('showLogin'))
-
     category = session.query(Category).filter_by(id=category_id).one()
     if not category.user_id == user_id:
         flash('Only owner can delete a specific category', 'error')
@@ -204,17 +208,12 @@ def showCategoryItem(category_id, item_id):
 
 @app.route('/catalog/category/<int:category_id>/item/create',
            methods=['GET', 'POST'])
+@login_required
 def createItem(category_id):
-    '''
+    """
     Render the form to create a new item for a category and save it in
     database if all the information was filled correctly.
-    '''
-    user_id = getUserIdFromSession(login_session)
-
-    if not user_id:
-        flash('Only authenticated users can create items', 'error')
-        return redirect(url_for('showLogin'))
-
+    """
     categories = session.query(Category).all()
     category = filter(lambda item: item.id == category_id, categories)
 
@@ -246,15 +245,12 @@ def createItem(category_id):
 
 @app.route('/catalog/category/<int:category_id>/item/<int:item_id>/delete',
            methods=['GET', 'POST'])
+@login_required
 def deleteItem(category_id, item_id):
     '''
     Render the form to delete a specific item and delete it in database.
     '''
     user_id = getUserIdFromSession(login_session)
-    if not user_id:
-        flash('Only authenticated users can access item edit form', 'error')
-        return redirect(url_for('showLogin'))
-
     item = session.query(Item).filter_by(id=item_id).one()
     if not item.user_id == user_id:
         flash('Only owner can delete a specific item', 'error')
@@ -271,16 +267,13 @@ def deleteItem(category_id, item_id):
         return render_template('delete_item.html', item=item)
 
 @app.route('/catalog/category/<int:category_id>/item/<int:item_id>/edit', methods=['GET', 'POST'])
+@login_required
 def editItem(category_id, item_id):
     '''
     Render the form to edit a specific item and save it in database if all
     the information was filled correctly.
     '''
     user_id = getUserIdFromSession(login_session)
-    if not user_id:
-        flash('Only authenticated users can access item edit form', 'error')
-        return redirect(url_for('showLogin'))
-
     categories = session.query(Category).all()
     item = session.query(Item).filter_by(id=item_id).one()
 
