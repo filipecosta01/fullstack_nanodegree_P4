@@ -69,7 +69,7 @@ def createCategory():
     user_id = getUserIdFromSession(login_session)
     if not user_id:
         flash('Only authenticated users can create categories', 'error')
-        return redirect(url_for('showCatalog'))
+        return redirect(url_for('showLogin'))
 
     if request.method == 'POST':
         category_title = request.form['title']
@@ -96,8 +96,7 @@ def editCategory(category_id):
     user_id = getUserIdFromSession(login_session)
     if not user_id:
         flash('Only authenticated users can edit categories', 'error')
-        return redirect(url_for('showCategoryItems',
-                                category_id=category_id))
+        return redirect(url_for('showLogin'))
     category = session.query(Category).filter_by(id=category_id).one()
     if not category.user_id == user_id:
         flash('Only owner can edit a specific category', 'error')
@@ -127,8 +126,7 @@ def deleteCategory(category_id):
     user_id = getUserIdFromSession(login_session)
     if not user_id:
         flash('Only authenticated users can delete categories', 'error')
-        return redirect(url_for('showCategoryItems',
-                                category_id=category_id))
+        return redirect(url_for('showLogin'))
 
     category = session.query(Category).filter_by(id=category_id).one()
     if not category.user_id == user_id:
@@ -215,8 +213,7 @@ def createItem(category_id):
 
     if not user_id:
         flash('Only authenticated users can create items', 'error')
-        return redirect(url_for('showCategoryItems',
-                                category_id=category_id))
+        return redirect(url_for('showLogin'))
 
     categories = session.query(Category).all()
     category = filter(lambda item: item.id == category_id, categories)
@@ -256,8 +253,7 @@ def deleteItem(category_id, item_id):
     user_id = getUserIdFromSession(login_session)
     if not user_id:
         flash('Only authenticated users can access item edit form', 'error')
-        return redirect(url_for('showCategoryItems',
-                                category_id=category_id))
+        return redirect(url_for('showLogin'))
 
     item = session.query(Item).filter_by(id=item_id).one()
     if not item.user_id == user_id:
@@ -283,8 +279,7 @@ def editItem(category_id, item_id):
     user_id = getUserIdFromSession(login_session)
     if not user_id:
         flash('Only authenticated users can access item edit form', 'error')
-        return redirect(url_for('showCategoryItems',
-                                category_id=category_id))
+        return redirect(url_for('showLogin'))
 
     categories = session.query(Category).all()
     item = session.query(Item).filter_by(id=item_id).one()
