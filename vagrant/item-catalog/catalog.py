@@ -17,6 +17,7 @@ class User(Base):
     
 class Category(Base):
     __tablename__ = 'category'
+    items = []
 
     id = Column(Integer, primary_key = True)
     title = Column(String(80), nullable = False)
@@ -27,7 +28,8 @@ class Category(Base):
     def serialize(self):
         return {
             'id': self.id,
-            'title': self.title
+            'title': self.title,
+            'items': self.items
         }
 
 class Item(Base):

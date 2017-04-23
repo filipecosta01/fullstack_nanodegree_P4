@@ -28,7 +28,7 @@
 
 {% block side_navigation %}
 <div class="col-md-12 side-navigation text-center">
-  {% if categories %}
+  {% if categories and categories|length > 0 %}
     <h4>Main Categories</h4>
     <hr>
       {% for category in categories %}
@@ -74,9 +74,7 @@
   </form>
   {% endif %}
   <!-- Show a default message if no items were retrieved from database. -->
-  {% if not latest_items %}
-    <h2 class="text-center">No items were found in database.</h2>
-  {% else %}
+  {% if latest_items and latest_items|length > 0 %}
     <h2 class="text-center">Latest items</h2>
     <!-- Render the items in the main page. -->
     <div class="row">
@@ -98,6 +96,8 @@
       </div>
     {% endfor %}
     </div>
+  {% else %}
+    <h2 class="text-center">No items were found in database.</h2>
   {% endif %}
 
 </div>

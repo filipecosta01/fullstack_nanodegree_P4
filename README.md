@@ -36,6 +36,15 @@ Almost there. Few more steps to start your server locally:
 2. Run `python catalog_loader.py` to populate some of the tables (it automatically inserts content in database)
 3. Run `python server.py` and check http://localhost:8000. The Catalog web page should be available if all finishes with success.
 
+## API Endpoints
+This project provides endpoints for each HTML page that has not-editable content.
+The endpoints available right now are:
+
+1. `/catalog/JSON`- The JSON with categories available and latest items created.
+2. `/catalog/category/<int:category_id>/items/JSON`- The JSON with the category selected and all the items for it
+3. `/catalog/category/<int:category_id>/item/<int:item_id>JSON`- The JSON with the category selected and the specific item for it
+
+Don't forget to check the code's documentation in case of doubts.
 
 ## [Contacting the Author](mailto:s.costa.filipe@gmail.com)
 Click above and feel free to get in touch in case of trouble or suggestions.

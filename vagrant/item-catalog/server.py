@@ -24,8 +24,8 @@ def apiShowCatalog():
     '''
     Return the list of categories and latest items in json format.
     '''
-    latest_items = session.query(Item).order_by('created_at desc').limit(12)
-    categories = session.query(Category).limit(12)
+    latest_items = session.query(Item).order_by('created_at desc').limit(12).all()
+    categories = session.query(Category).limit(12).all()
     return jsonify(Category=[category.serialize for category in categories], LatestItems=[item.serialize for item in latest_items])
 
 @app.route('/')
@@ -35,8 +35,8 @@ def showCatalog():
     Show the main page with latest items registered on database.
     '''
     user_id = getUserIdFromSession(login_session)
-    categories = session.query(Category).limit(12)
-    latest_items = session.query(Item).order_by('created_at desc').limit(12)
+    categories = session.query(Category).limit(12).all()
+    latest_items = session.query(Item).order_by('created_at desc').limit(12).all()
     if user_id:
         user = user = session.query(User).filter_by(id=user_id).one()
         return render_template('catalog.html', user=user, categories=categories,
@@ -149,8 +149,10 @@ def apiShowCategoryItems(category_id):
     '''
     Return the list of items for a specific category in json format.
     '''
+    category = session.query(Category).filter_by(id=category_id).one()
     items = session.query(Item).filter_by(category_id=category_id)
-    return jsonify(Items=[item.serialize for item in items])
+    category.items = [item.serialize for item in items]
+    return jsonify(Category=category.serialize)
 
 @app.route('/catalog/category/<int:category_id>/items')
 def showCategoryItems(category_id):
@@ -177,8 +179,10 @@ def apiShowCategoryItem(category_id, item_id):
     '''
     Return the item for a specific category in json format.
     '''
+    category = session.query(Category).filter_by(id=category_id).one()
     item = session.query(Item).filter_by(id=item_id).one()
-    return jsonify(Item=[item.serialize])
+    category.items = [item.serialize]
+    return jsonify(Category=category.serialize)
 
 @app.route('/catalog/category/<int:category_id>/item/<int:item_id>')
 def showCategoryItem(category_id, item_id):
