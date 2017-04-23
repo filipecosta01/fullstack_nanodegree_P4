@@ -34,22 +34,6 @@ body {
     margin-bottom: 10px;
 }
 
-.icon {
-  font-size: 22px;
-}
-
-.btn-like {
-  background-color: #8d4792;
-  border-color: #9c9c9c;
-  color: white;
-}
-
-.btn-like:hover {
-  background-color: #4d3474;
-  border-color: #9c9c9c;
-  color: white;
-}
-
 .btn-submit {
   background-color: #286476;
   border-color: #9c9c9c;
@@ -85,30 +69,13 @@ body {
   text-decoration: none;
 }
 
-.blog-title, .blog-title:hover {
+.catalog-title, .catalog-title:hover {
   text-decoration: none;
   color: #242038;
 }
 
-.blog-title h1 {
+.catalog-title h1 {
   margin-bottom: 20px;
-}
-
-.divider {
-  height: 1px;
-  width:100%;
-  display:block;
-  overflow: hidden;
-  background-color: #e5e5e5;
-}
-
-.comments-area {
-  overflow: scroll;
-  max-height: 400px;
-}
-
-.content-separator {
-  border-bottom: 2px solid #7d97ad;
 }
 
 .section {
@@ -125,25 +92,6 @@ body {
   flex-direction: column;
 }
 
-.post-right-content {
-  align-self: flex-end;
-  color: #7d97ad;
-}
-
 .error-message {
   color: red;
-}
-
-.end-aligned {
-  align-self: flex-end;
-}
-
-.edit-post-buttons {
-  align-self: flex-end;
-  margin-bottom: 5px;
-}
-
-.likes-info {
-  color: #8d4792;
-  font-weight: bold;
 }
