@@ -62,10 +62,10 @@
   {% endwith %}
 {% endblock %}
 
-<!-- Render the main area of the blog's main page. -->
+<!-- Render the main area of the catalog's main page. -->
 {% block content %}
 <div class="col-md-12">
-  <!-- Show the new post button if the user is logged in. -->
+  <!-- Show the new category button if the user is logged in. -->
   {% if user %}
   <form class="text-right" action="{{ url_for('createCategory') }}" method="GET">
     <button type="submit" class="btn btn-submit text-right">

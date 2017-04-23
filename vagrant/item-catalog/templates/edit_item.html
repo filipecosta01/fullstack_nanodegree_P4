@@ -18,7 +18,7 @@
   {% endwith %}
 {% endblock %}
 
-<!-- Render the main area of the new post's' page. Only authenticated users will access this page. -->
+<!-- Render the main area of the edit item's page. Only authenticated users will access this page. -->
 {% block content %}
 <div class="col-md-12">
   <h2>Edit {{item.title}}</h2>
@@ -42,6 +42,7 @@
       <select class="form-control" name="category" id="category">
         <option disabled value=''>Select a category</option>
         {% for categoryItem in categories %}
+            <!-- Bit of logic to keep the value user wrote before submit for, avoiding loose data if the submited values were not ok. -->
             {% if last_category and last_category == categoryItem.id %}
             <option selected value='{{categoryItem.id}}'>{{categoryItem.title}}</option>
             {% elif not last_category and item.category_id == categoryItem.id %}

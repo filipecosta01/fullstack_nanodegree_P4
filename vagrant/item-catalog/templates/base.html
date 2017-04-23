@@ -8,6 +8,7 @@
     <link type="text/css" rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/font-awesome/latest/css/font-awesome.min.css">
     <link href="https://fonts.googleapis.com/css?family=Open+Sans" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='main.css') }}">
+    <!-- Block for including scripts in a specific template. -->
     {% block scripting %}
     {% endblock %}
   </head>
@@ -27,7 +28,7 @@
               {% endblock %}
             </div>
             <div class="col-md-2 action-area-text">
-              <!-- The right area of the navbar, for login/logout/go to main posts actions. -->
+              <!-- The right area of the navbar, for login/logout actions. -->
               {% block action_area %}
               {% endblock %}
             </div>
@@ -37,9 +38,11 @@
       <main>
           <div class="col-md-12">
             <div class="row">
+              <!-- The error message area, nicely placed after the navbar. -->
               {% block error_message %}
               {% endblock %}
 
+              <!-- The success message area, nicely placed after the navbar. -->
               {% block success_message %}
               {% endblock %}
             </div>
@@ -49,6 +52,7 @@
               {% if side_navigation %}
                 <div class="col-md-2">
                   <div class="row">
+                    <!-- The side menu bar, with main categories. -->
                     {% block side_navigation %}
                     {% endblock %}
                   </div>

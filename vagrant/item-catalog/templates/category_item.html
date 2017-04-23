@@ -66,10 +66,10 @@
   {% endwith %}
 {% endblock %}
 
-<!-- Render the main area of the blog's main page. -->
+<!-- Render the main area of the selected item according to the category. -->
 {% block content %}
 <div class="col-md-12">
-  <!-- Show the new post button if the user is logged in. -->
+  <!-- Show the action buttons if the user is logged in and owns the item. -->
   {% if user %}
   <form class="text-right" method="GET">
     {% if item.user_id == user.id %}
