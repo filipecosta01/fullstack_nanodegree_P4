@@ -3,7 +3,7 @@
 {% block title %}
 <a class="blog-title" href="{{ url_for('showCatalog') }}">
   <h1 class="text-uppercase text-center">
-    The Catalog - New Category
+    The Catalog - Edit Category
   </h1>
 </a>
 {% endblock %}
@@ -21,13 +21,13 @@
 <!-- Render the main area of the new post's' page. Only authenticated users will access this page. -->
 {% block content %}
 <div class="col-md-12">
-  <h2>Create a new Category</h2>
+  <h2>Edit {{category.title}}</h2>
   <form method="POST">
     <div class="form-group">
       <label for="name">
-        Category's Title:
+        Category's Name:
       </label>
-      <input type="text" class="form-control" id="title" name="title" placeholder="Title">
+      <input type="text" class="form-control" id="title" name="title" placeholder="{{category.title}}">
     </div>
     <div class="row">
       <div class="error-message col-md-12">
@@ -36,7 +36,7 @@
     </div>
     <br>
     <button class="btn btn-submit" type="submit">Submit</button>
-    <button class="btn btn-warning" formmethod="GET" formaction="{{ url_for('showCatalog') }}" type="submit">Cancel</button>
+    <button class="btn btn-warning" formmethod="GET" formaction="{{ url_for('showCategoryItems', category_id=category.id) }}" type="submit">Cancel</button>
   </form>
 </div>
 {% endblock %}

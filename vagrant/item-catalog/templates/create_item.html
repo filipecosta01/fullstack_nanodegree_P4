@@ -1,0 +1,65 @@
+{% extends "base.html" %}
+
+{% block title %}
+<a class="blog-title" href="{{ url_for('showCategoryItems', category_id=category.id) }}">
+  <h1 class="text-uppercase text-center">
+    The Catalog - New Item for category {{category.title}}
+  </h1>
+</a>
+{% endblock %}
+
+{% block error_message %}
+  {% with error_messages = get_flashed_messages(with_categories=true) %}
+  {% if error_messages and error_messages[0] and error_messages[0][0] == 'error' %}
+    <div class="alert alert-danger" role="alert">
+      <strong>Oh snap!</strong> {{error_messages[0][1]}}
+    </div>
+  {% endif %}
+  {% endwith %}
+{% endblock %}
+
+<!-- Render the main area of the new post's' page. Only authenticated users will access this page. -->
+{% block content %}
+<div class="col-md-12">
+  <h2>Create a new Item</h2>
+  <form method="POST">
+    <div class="form-group">
+      <label for="name">
+        Item's Title:
+      </label>
+      <input type="text" class="form-control" id="title" name="title" value="{{last_title}}" placeholder="Title">
+    </div>
+    <div class="form-group">
+      <label for="description">
+        Item's Description:
+      </label>
+      <textarea class="form-control" id="description" name="description" placeholder="Description">{{last_description}}</textarea>
+    </div>
+    <div class="form-group">
+      <label for="name">
+        Item's Category:
+      </label>
+      <select class="form-control" name="category" id="category">
+        <option disabled value=''>Select a category</option>
+        {% for categoryItem in categories %}
+            {% if last_category and last_category == categoryItem.id %}
+            <option selected value='{{categoryItem.id}}'>{{categoryItem.title}}</option>
+            {% elif not last_category and category.id == categoryItem.id %}
+            <option selected value='{{categoryItem.id}}'>{{categoryItem.title}}</option>
+            {% else %}
+            <option value='{{categoryItem.id}}'>{{categoryItem.title}}</option>
+            {% endif %}
+        {% endfor %}
+    </select>
+    </div>
+    <div class="row">
+      <div class="error-message col-md-12">
+        {{error_message}}
+      </div>
+    </div>
+    <br>
+    <button class="btn btn-submit" type="submit">Submit</button>
+    <button class="btn btn-warning" formmethod="GET" formaction="{{ url_for('showCategoryItems', category_id=category.id) }}" type="submit">Cancel</button>
+  </form>
+</div>
+{% endblock %}

@@ -58,7 +58,6 @@ function signInCallback(authResult) {
 {% block action_area %}
   {% if user %}
   <a href="{{ url_for('doLogout') }}">Logout</a>
-  <a href="/logout">Logout</a>
   {% else %}
   <div id="signInButton">
     <span class="g-signin"

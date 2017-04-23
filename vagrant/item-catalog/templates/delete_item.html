@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}
+<a class="blog-title" href="{{ url_for('showCategoryItems', category_id=item.category_id) }}">
+  <h1 class="text-uppercase text-center">
+    The Catalog - Delete {{item.title}}
+  </h1>
+</a>
+{% endblock %}
+
+{% block content %}
+<div class="col-md-12">
+  <h2>Do you really want to delete the item '{{item.title}}'?</h2>
+  <form method="POST" action="{{ url_for('deleteItem', category_id=item.category_id, item_id=item.id) }}">
+    <button class="btn btn-danger" type="submit">Delete</button>
+    <button class="btn btn-submit" formmethod="GET" formaction="{{ url_for('showCategoryItem', category_id=item.category_id, item_id=item.id) }}" type="submit">Cancel</button>
+  </form>
+</div>
+{% endblock %}

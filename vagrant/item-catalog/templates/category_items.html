@@ -1,0 +1,116 @@
+{% extends "base.html" %}
+
+{% block title %}
+<a class="blog-title" href="{{ url_for('showCatalog') }}">
+  <h1 class="text-uppercase text-center">
+    The Catalog - Items in {{category.title}} category
+  </h1>
+</a>
+{% endblock %}
+
+{% block name_area %}
+<h3 class="text-center navbar-text">
+  {% if user %}
+    Viewing as {{user.name}}
+  {% else %}
+    Viewing as unknown
+  {% endif %}
+</h3>
+{% endblock %}
+
+{% block action_area %}
+  {% if user %}
+  <a href="{{ url_for('doLogout') }}">Logout</a>
+  {% else %}
+  <a href="{{url_for('showLogin')}}">Login</a>
+  {% endif %}
+{% endblock %}
+
+{% block side_navigation %}
+<div class="col-md-12 side-navigation text-center">
+  {% if categories %}
+    <h4>Main Categories</h4>
+    <hr>
+      {% for categoryItem in categories %}
+        <p>
+          {% if categoryItem.id == category.id %}
+            <h4 class='selected'><a href="{{ url_for('showCategoryItems', category_id=categoryItem.id) }}">{{categoryItem.title}}</a></h4>
+          {% else %}
+            <h4><a href="{{ url_for('showCategoryItems', category_id=categoryItem.id) }}">{{categoryItem.title}}</a></h4>
+          {% endif %}
+        </p>
+      {% endfor %}
+  {% else %}
+    <h5 class="text-center">No categories were found in database.</h5>
+  {% endif %}
+</div>
+{% endblock %}
+
+{% block error_message %}
+  {% with error_messages = get_flashed_messages(with_categories=true) %}
+  {% if error_messages and error_messages[0] and error_messages[0][0] == 'error' %}
+    <div class="alert alert-danger" role="alert">
+      <strong>Oh snap!</strong> {{error_messages[0][1]}}
+    </div>
+  {% endif %}
+  {% endwith %}
+{% endblock %}
+
+{% block success_message %}
+  {% with success_messages = get_flashed_messages(with_categories=true) %}
+  {% if success_messages and success_messages[0] and success_messages[0][0] == 'success' %}
+    <div class="alert alert-success" role="alert">
+      <strong>Yay!</strong> {{success_messages[0][1]}}
+    </div>
+  {% endif %}
+  {% endwith %}
+{% endblock %}
+
+<!-- Render the main area of the blog's main page. -->
+{% block content %}
+<div class="col-md-12">
+  <!-- Show the new post button if the user is logged in. -->
+  {% if user %}
+  <form class="text-right" method="GET">
+    <button type="submit" formaction="{{ url_for('createItem', category_id=category.id) }}"class="btn btn-submit text-right">
+      Create new item
+    </button>
+    {% if category.user_id == user.id %}
+      <button type="submit" formaction="{{ url_for('editCategory', category_id=category.id) }}" class="btn btn-warning text-right">
+        Edit {{category.title}} Category
+      </button>
+      <button type="submit" formaction="{{ url_for('deleteCategory', category_id=category.id) }}"class="btn btn-danger text-right">
+        Delete {{category.title}} Category
+      </button>
+    {% endif %}
+  </form>
+  {% endif %}
+  <!-- Show a default message if no items were retrieved from database. -->
+  {% if not items %}
+    <h2 class="text-center">No items were found in database.</h2>
+  {% else %}
+    <h2 class="text-center">{{category.title}} items</h2>
+    <!-- Render the items in the main page. -->
+    <div class="row">
+    {% for item in items %}
+      <div class="col-md-4 margin-vertical">
+        <a class="no-decoration" href="{{ url_for('showCategoryItem', category_id=item.category_id, item_id=item.id) }}">
+          <article class="item-element">
+            <section>
+              <div class="row">
+                <div class="col-md-12 text-center">
+                  <h3>
+                    {{item.title}}
+                  </h3>
+                </div>
+              </div>
+            </section>
+          </article>
+        </a>
+      </div>
+    {% endfor %}
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}

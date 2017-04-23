@@ -62,8 +62,8 @@ body {
   color: white;
 }
 
-.single-comment-area {
-  background-color: #d4d4d4;
+.selected {
+    text-decoration: underline;
 }
 
 .action-area-text {
