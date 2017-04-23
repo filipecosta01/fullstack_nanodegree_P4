@@ -1,7 +1,7 @@
 from flask import Flask, render_template, url_for, request, redirect, flash, jsonify, session as login_session, make_response
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
-from catalog import Base, User, Category, Item
+from database_setup import Base, User, Category, Item
 from oauth2client.client import flow_from_clientsecrets, FlowExchangeError
 from functools import wraps
 
@@ -32,9 +32,9 @@ def login_required(f):
 
 @app.route('/catalog/JSON')
 def apiShowCatalog():
-    '''
+    """
     Return the list of categories and latest items in json format.
-    '''
+    """
     latest_items = session.query(Item).order_by('created_at desc').limit(12).all()
     categories = session.query(Category).limit(12).all()
 
@@ -43,9 +43,9 @@ def apiShowCatalog():
 @app.route('/')
 @app.route('/catalog')
 def showCatalog():
-    '''
+    """
     Show the main page with latest items registered on database.
-    '''
+    """
     user_id = getUserIdFromSession(login_session)
     categories = session.query(Category).limit(12).all()
     latest_items = session.query(Item).order_by('created_at desc').limit(12).all()
@@ -58,9 +58,9 @@ def showCatalog():
                            latest_items=latest_items, side_navigation=True)
 @app.route('/login')
 def showLogin():
-    '''
+    """
     Show login view with google authentication only (for now...).
-    '''
+    """
     user_id = getUserIdFromSession(login_session)
     if user_id:
         flash('You are already logged in.', 'error')
@@ -74,10 +74,10 @@ def showLogin():
 @app.route('/catalog/category/create', methods=['GET', 'POST'])
 @login_required
 def createCategory():
-    '''
+    """
     Render the form to create a new category and save it in database if all the
     information was filled correctly.
-    '''
+    """
     user_id = getUserIdFromSession(login_session)
 
     if request.method == 'POST':
@@ -99,10 +99,10 @@ def createCategory():
 @app.route('/catalog/category/<int:category_id>/edit', methods=['GET', 'POST'])
 @login_required
 def editCategory(category_id):
-    '''
+    """
     Render the form to edit a specific category and save it in database if all
     the information was filled correctly.
-    '''
+    """
     user_id = getUserIdFromSession(login_session)
     category = session.query(Category).filter_by(id=category_id).one()
     if not category.user_id == user_id:
@@ -128,9 +128,9 @@ def editCategory(category_id):
            methods=['GET', 'POST'])
 @login_required
 def deleteCategory(category_id):
-    '''
+    """
     Render the form to delete a specific category and delete it in database.
-    '''
+    """
     user_id = getUserIdFromSession(login_session)
     category = session.query(Category).filter_by(id=category_id).one()
     if not category.user_id == user_id:
@@ -149,9 +149,9 @@ def deleteCategory(category_id):
 
 @app.route('/catalog/category/<int:category_id>/items/JSON')
 def apiShowCategoryItems(category_id):
-    '''
+    """
     Return the list of items for a specific category in json format.
-    '''
+    """
     category = session.query(Category).filter_by(id=category_id).one()
     items = session.query(Item).filter_by(category_id=category_id)
     category.items = [item.serialize for item in items]
@@ -159,9 +159,9 @@ def apiShowCategoryItems(category_id):
 
 @app.route('/catalog/category/<int:category_id>/items')
 def showCategoryItems(category_id):
-    '''
+    """
     Render the items for a specific category selected.
-    '''
+    """
     user_id = getUserIdFromSession(login_session)
 
     items = session.query(Item).filter_by(category_id=category_id).all()
@@ -179,9 +179,9 @@ def showCategoryItems(category_id):
 
 @app.route('/catalog/category/<int:category_id>/item/<int:item_id>/JSON')
 def apiShowCategoryItem(category_id, item_id):
-    '''
+    """
     Return the item for a specific category in json format.
-    '''
+    """
     category = session.query(Category).filter_by(id=category_id).one()
     item = session.query(Item).filter_by(id=item_id).one()
     category.items = [item.serialize]
@@ -189,9 +189,9 @@ def apiShowCategoryItem(category_id, item_id):
 
 @app.route('/catalog/category/<int:category_id>/item/<int:item_id>')
 def showCategoryItem(category_id, item_id):
-    '''
+    """
     Render one specific item for a specific category selected.
-    '''
+    """
     user_id = getUserIdFromSession(login_session)
 
     categories = session.query(Category).all()
@@ -247,9 +247,9 @@ def createItem(category_id):
            methods=['GET', 'POST'])
 @login_required
 def deleteItem(category_id, item_id):
-    '''
+    """
     Render the form to delete a specific item and delete it in database.
-    '''
+    """
     user_id = getUserIdFromSession(login_session)
     item = session.query(Item).filter_by(id=item_id).one()
     if not item.user_id == user_id:
@@ -269,10 +269,10 @@ def deleteItem(category_id, item_id):
 @app.route('/catalog/category/<int:category_id>/item/<int:item_id>/edit', methods=['GET', 'POST'])
 @login_required
 def editItem(category_id, item_id):
-    '''
+    """
     Render the form to edit a specific item and save it in database if all
     the information was filled correctly.
-    '''
+    """
     user_id = getUserIdFromSession(login_session)
     categories = session.query(Category).all()
     item = session.query(Item).filter_by(id=item_id).one()
@@ -309,10 +309,10 @@ def editItem(category_id, item_id):
         return render_template('edit_item.html', item=item, categories=categories)
 
 def createUser(login_session):
-    '''
+    """
     Create a new user using the login_session, with information returned from
     google oAuth.
-    '''
+    """
     user_name = login_session['name']
     user_email = login_session['email']
     newUser = User(name=user_name, email=user_email)
@@ -324,10 +324,10 @@ def createUser(login_session):
 
 @app.route('/gconnect', methods=['POST'])
 def gconnect():
-    '''
+    """
     Do the Google Authentication using oAuth and information from user's
     account. Creates a new session and store values like user_id and name.
-    '''
+    """
     if request.args.get('state') != login_session['state']:
         response = make_response(json.dumps('Invalid state'), 401)
         response.headers['Content-type'] = 'application/json'
@@ -413,10 +413,10 @@ def gconnect():
 
 @app.route('/gdisconnect')
 def doLogout():
-    '''
+    """
     Revoke the Google Authentication using oAuth and information from user's
     account. Delete all the information from the session.
-    '''
+    """
     errorMessage = 'Failed to revoke the access token for the user...'
     try:
         access_token = login_session['access_token']
@@ -453,16 +453,16 @@ def doLogout():
         return redirect(url_for('showCatalog'))
 
 def getUserInfo(user_id):
-    '''
+    """
     Get the user information from database filtering by user_id in parameter.
-    '''
+    """
     user = session.query(User).filter_by(id=user_id).one()
     return user
 
 def getUserId(email):
-    '''
+    """
     Get the user_id information from database filtering by email in paramter.
-    '''
+    """
     try:
         user = session.query(User).filter_by(email=email).one()
         return user.id
@@ -470,9 +470,9 @@ def getUserId(email):
         return None
 
 def getUserIdFromSession(login_session):
-    '''
+    """
     Get the user_id information from the session variable in parameter.
-    '''
+    """
     try:
         user = login_session['user_id']
         return user

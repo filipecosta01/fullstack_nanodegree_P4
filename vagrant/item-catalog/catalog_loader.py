@@ -1,7 +1,7 @@
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
-from catalog import Base, User, Category, Item
+from database_setup import Base, User, Category, Item
 
 engine = create_engine('sqlite:///catalog.db')
 
